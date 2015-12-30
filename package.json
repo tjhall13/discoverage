@@ -1,6 +1,6 @@
 {
   "name": "discoverage",
-  "version": "0.1.1-alpha",
+  "version": "0.1.2-alpha",
   "description": "Code coverage display web server for lcov statistics.",
   "main": "index.js",
   "bin": {

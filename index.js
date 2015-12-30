@@ -10,7 +10,7 @@ var stats = require('./theme/cafe/stats.cafe');
 module.exports = function(ctx) {
 	var app = express();
 
-	app.use(express.static(path.resolve('theme/')));
+	app.use(express.static(path.resolve(__dirname, 'theme/')));
 	app.use(/\/((?:[^\/]+\/?)+)/,
 		function(req, res, next) {
 			var path = req.params[0].split('/');
