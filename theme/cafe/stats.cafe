@@ -1,0 +1,50 @@
+<$js
+	function breadcrumbs(path) {
+		var crumbs = path.split('/');
+		var cap = '';
+		if(crumbs[crumbs.length - 1] === '') {
+			crumbs.splice(-1, 1);
+			cap = '/';
+		}
+		var current = crumbs.splice(-1, 1);
+		var link = '/';
+		return crumbs
+			.map(function(crumb) {
+				link += crumb + cap;
+				return '<a href="' + link + '">' + crumb + '</a>';
+			})
+			.concat(current);
+	}
+
+	var directory = require('./directory.cafe');
+	var file = require('./file.cafe');
+
+	var title = 'Stats | ' + request.lcov.path;
+	var links =
+		['<a href="/">' + request.lcov.name + '</a>']
+		.concat(breadcrumbs(request.lcov.path));
+$>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="/css/discoverage.css">
+		<title><$ print(title); $></title>
+	</head>
+	<body>
+		<div class="container">
+			<h1><$ print('Discoverage | ' + request.lcov.name); $></h1>
+			<ul class="breadcrumbs"> <$js
+				links.forEach(function(crumb) { $>
+					<li><$ print(crumb); $></li> <$js
+				}); $>
+			</ul>
+<$js
+	if(Array.isArray(request.lcov.data)) {
+		file(request.lcov.path, request.lcov.data, request.lcov.code);
+	} else {
+		directory(request.lcov.path, request.lcov.data);
+	}
+$>
+		</div>
+	</body>
+</html>

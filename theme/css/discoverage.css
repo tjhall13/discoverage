@@ -1,0 +1,80 @@
+body {
+	font-family: arial;
+}
+
+a {
+	text-decoration: none;
+	color: #38408e;
+}
+
+a:hover {
+	color: #000000;
+}
+
+.container {
+	width: 80%;
+	margin: auto;
+}
+
+ul.breadcrumbs {
+	padding: 0;
+	list-style: none;
+	font-size: 25px;
+}
+
+ul.breadcrumbs > li {
+	display: inline-block;
+	padding-right: 20px;
+}
+
+ul.breadcrumbs > li:not(:first-of-type):before {
+	content: '/';
+	color: #8e8e8e;
+	padding-right: 20px;
+}
+
+ul.breadcrumbs > li:last-of-type {
+	color: #8e8e8e;
+}
+
+ul.header {
+	padding: 0;
+	list-style: none;
+	width: 100%;
+}
+
+ul.header > li {
+	display: inline-block;
+	width: 33%;
+	font-size: 40px;
+	font-weight: 700;
+	text-align: center;
+}
+
+table.code-review {
+	width: 100%;
+	border-collapse: collapse;
+	background: #f0f0f0;
+	border: 1px solid #a5b9aa;
+}
+
+table.code-review td {
+	padding: 4px 8px;
+}
+
+table.code-review td.lineno {
+	padding-left: 22px;
+	text-align: right;
+}
+
+table.code-review td.code {
+	border-left: 1px solid #a5b9aa;
+}
+
+table.code-review tr.hit {
+	background: #5f9744;
+}
+
+table.code-review tr.missed {
+	background: #b94947;
+}

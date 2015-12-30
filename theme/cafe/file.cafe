@@ -1,0 +1,42 @@
+<$js
+	var util = require('util');
+	var html = require('../../lib/html.js');
+	var stats = require('../../lib/stats.js');
+
+	var filename = arguments[0];
+	var data = arguments[1];
+	var code = arguments[2];
+
+	var coverage = stats.coverage(data);
+	var lines = code
+		.split('\n');
+	lines.splice(-1, 1);
+	lines = lines.map(function(line) {
+		return {
+			code: html.scrub(line),
+			status: 'never'
+		};
+	});
+	data.forEach(function(entry) {
+		if(+entry.hits > 0) {
+			lines[+entry.lineno - 1].status = 'hit';
+		} else {
+			lines[+entry.lineno - 1].status = 'missed';
+		}
+	});
+$>
+<ul class="header">
+	<li><$ print(filename); $></li>
+	<li><$ print(coverage.hits + ' / ' + coverage.total); $></li>
+	<li><$ print(coverage.percent); $></li>
+</ul>
+<table class="code-review">
+	<tbody> <$js
+	lines.forEach(function(line, index) { $>
+		<tr class="<$ print(line.status); $>">
+			<td class="lineno"><pre><$ print(index + 1); $></pre></td>
+			<td class="code"><code><$ print(line.code); $></code></td>
+		</tr> <$js
+	}); $>
+	</tbody>
+</table>

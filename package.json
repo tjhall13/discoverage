@@ -1,0 +1,38 @@
+{
+  "name": "discoverage",
+  "version": "0.1.0",
+  "description": "Code coverage display web server for lcov statistics.",
+  "main": "index.js",
+  "bin": {
+    "discoverage": "bin/discoverage"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "lcov",
+    "jscoverage",
+    "discoverage",
+    "web",
+    "server"
+  ],
+  "author": "Trevor Hall",
+  "license": "MIT",
+  "dependencies": {
+    "cafescript": "git://github.com/tjhall13/discoverage.git#master",
+    "express": "^4.13.3",
+    "nopt": "^3.0.6"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "^0.11.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tjhall13/discoverage.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tjhall13/discoverage/issues"
+  },
+  "homepage": "https://github.com/tjhall13/discoverage#readme"
+}

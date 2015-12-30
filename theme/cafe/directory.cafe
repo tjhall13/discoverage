@@ -1,0 +1,27 @@
+<$js
+	var stats = require('../../lib/stats.js');
+	var path = arguments[0];
+	var data = arguments[1];
+$>
+<table>
+	<thead>
+		<th>File/Directory</th>
+		<th>Hit</th>
+		<th>Total</th>
+		<th>Coverage (%)</th>
+	</thead>
+	<tbody> <$js
+	var coverage;
+	for(var entry in data) {
+		coverage = stats.coverage(data[entry]); $>
+		<tr>
+			<td>
+				<a href="<$ print(entry); $>"><$ print(entry); $></a>
+			</td>
+			<td><$ print(coverage.hits); $></td>
+			<td><$ print(coverage.total); $></td>
+			<td><$ print(coverage.percent); $></td>
+		</tr> <$js
+	} $>
+	</tbody>
+</table>

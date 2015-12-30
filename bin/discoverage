@@ -1,0 +1,140 @@
+#!/usr/bin/nodejs
+
+var cluster = require('cluster');
+var http = require('http');
+var path = require('path');
+var nopt = require('nopt');
+var fs = require('fs');
+
+var discoverage = require('../index.js');
+var library = require('../lib/library.js');
+var expand = require('../lib/expand.js');
+var lcov = require('../lib/lcov.js');
+var pkg = require('../package.json');
+
+function help() {
+  var text = [
+	'Usage: discoverage [options] <config>',
+	'Options:',
+	'  --version -v          Display version information.',
+	'  --help -h             Show this help.',
+	'  --name -n <name>      Use <name> as projet name.',
+	'  --report -r <file>    Use <file> as coverage report.',
+	'  --src -s <dir>        Use <dir> as source code location.',
+	'  --port -p <port>      Host web server on <port>.',
+	'',
+	'Parameters:',
+	'  <config> is the relative path to a .json file expecting',
+	'the properties "name" and "report". The properties "src" and',
+	'"port" are optional and default to "./" and "8080" respectively.',
+	'',
+	'To connect. Simply connect your browser to localhost:<port>'
+  ].reduce(
+	function(current, line) {
+		return current + line + '\n';
+	}, ''
+  );
+	return text.substr(0, text.length - 1);
+}
+
+var options = nopt({
+		version: Boolean,
+		help: Boolean,
+		name: String,
+		report: path,
+		src: path,
+		port: Number
+	}, {
+		v: '--version',
+		h: '--help',
+		n: '--name',
+		r: '--report',
+		s: '--src',
+		p: '--port'
+	}, process.argv);
+
+if(options.version) {
+	console.log(pkg.name + ' v' + pkg.version);
+	process.exit(0);
+}
+
+if(options.help) {
+	console.log(help());
+	process.exit(0);
+}
+
+var filename = 'discoverage.json';
+if(options.argv.remain.length > 0) {
+	filename = options.argv.remain[0];
+}
+
+var config;
+try {
+	config = require(path.resolve(filename));
+} catch(err) {
+	console.error(err.message);
+	process.exit(1);
+}
+
+if(!config.name) {
+	console.error('No project name provided');
+	process.exit(1);
+}
+if(!config.report) {
+	console.error('No report file provided');
+	process.exit(1);
+}
+config.port = config.port || 8080;
+
+for(var option in config) {
+	if(option in options) {
+		config[option] = options[option];
+	}
+}
+
+if(config.report.charAt(0) == '~') {
+	config.report = path.resolve(process.env.HOME + config.report.substr(1));
+} else {
+	config.report = path.resolve(config.report);
+}
+
+if(config.src) {
+	if(config.src.charAt(0) == '~') {
+		config.src = path.resolve(process.env.HOME + config.src.substr(1));
+	}
+} else {
+	config.src = '.';
+}
+
+var data = lcov.readFileSync(config.report);
+var code = library.getFilesSync(Object.keys(data), config.src);
+
+if(cluster.isMaster) {
+	process.title = 'discoverage';
+	var worker = cluster.fork();
+	if(config.report) {
+		fs.watch(config.report, function(event, filename) {
+			if(event == 'change') {
+				var data = lcov.readFileSync(config.report);
+				var code = library.getFilesSync(Object.keys(data), config.src);
+				worker.send({
+					lcov: expand(data),
+					code: code
+				});
+			}
+		});
+	}
+} else {
+	var ctx = {
+		name: config.name,
+		lcov: expand(data),
+		code: code
+	};
+	process.on('message', function(msg) {
+		if(msg.lcov) {
+			ctx.lcov = msg.lcov;
+			ctx.code = msg.code;
+		}
+	});
+	http.createServer(discoverage(ctx)).listen(config.port);
+}
