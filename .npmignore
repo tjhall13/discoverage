@@ -1,0 +1,11 @@
+# git
+.git*
+
+# npm
+.npm*
+
+# build
+Gruntfile.js
+
+# test
+test/
