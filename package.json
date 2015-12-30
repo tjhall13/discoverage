@@ -1,6 +1,6 @@
 {
   "name": "discoverage",
-  "version": "0.1.0-alpha",
+  "version": "0.1.1-alpha",
   "description": "Code coverage display web server for lcov statistics.",
   "main": "index.js",
   "bin": {
@@ -19,7 +19,7 @@
   "author": "Trevor Hall",
   "license": "MIT",
   "dependencies": {
-    "cafescript": "git://github.com/tjhall13/discoverage.git#master",
+    "cafescript": "^0.4.0",
     "express": "^4.13.3",
     "nopt": "^3.0.6"
   },
